@@ -5,4 +5,4 @@
 * [图像优化](./docs/HTML/图像优化.md#图像优化)
 
 ## NodeJS
-* [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别)
+* [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
