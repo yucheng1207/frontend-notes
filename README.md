@@ -6,7 +6,8 @@
 
 ## CSS
 ## JavaScript
-* [原型&原型链](./docs/JavaScript/原型&原型链)
+* [原型&原型链](./docs/JavaScript/原型&原型链.md)
+* [new运算符](./docs/JavaScript/new运算符.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
