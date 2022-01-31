@@ -14,6 +14,7 @@
 * [作用域](./docs/JavaScript/作用域.md)
 * [闭包](./docs/JavaScript/闭包.md)
 * [this](./docs/JavaScript/this.md)
+* [继承](./docs/JavaScript/继承.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
