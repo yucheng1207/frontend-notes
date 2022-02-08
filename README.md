@@ -15,6 +15,10 @@
 * [闭包](./docs/JavaScript/闭包.md)
 * [this](./docs/JavaScript/this.md)
 * [继承](./docs/JavaScript/继承.md)
+* [函数柯里化和偏函数](./docs/JavaScript/函数柯里化和偏函数.md)
+
+## 浏览器
+* [V8引擎的垃圾回收](./docs/JavaScript/V8引擎的垃圾回收.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
