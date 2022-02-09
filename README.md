@@ -20,6 +20,7 @@
 ## 浏览器
 * [V8引擎的垃圾回收](./docs/JavaScript/V8引擎的垃圾回收.md)
 * [事件循环机制](./docs/JavaScript/事件循环机制.md)
+* [浮点数精度](./docs/JavaScript/浮点数精度.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
