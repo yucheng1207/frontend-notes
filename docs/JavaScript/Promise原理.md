@@ -417,6 +417,124 @@ try {
 ```
 
 
+## async/await
+ES7 提出的async 函数，终于让 JS 对于异步操作有了终极解决方案
+```js
+// promise写法
+Promise.resolve(a)
+  .then(b => {
+    // do something
+  })
+  .then(c => {
+    // do something
+  })
+
+// async/await写法
+async () => {
+  const a = await Promise.resolve(a);
+  const b = await Promise.resolve(b);
+  const c = await Promise.resolve(c);
+}
+```
+
+那么我们要如何实现一个 async/await 呢，首先我们要知道，async/await 实际上是对Generator（生成器）的封装，是一个语法糖。下面我们先来了解一些 Generator 函数。
+
+### Generator
+ES6 新引入了 Generator 函数，可以通过 yield 关键字，把函数的执行流挂起，通过next()方法可以切换到下一个状态，为改变执行流程提供了可能，从而为异步编程提供解决方案。
+```js
+function* myGenerator() {
+  yield '1'
+  yield '2'
+  return '3'
+}
+
+const gen = myGenerator();  // 获取迭代器
+gen.next()  //{value: "1", done: false}
+gen.next()  //{value: "2", done: false}
+gen.next()  //{value: "3", done: true}
+```
+也可以通过给 next() 传参, 让 yield 具有返回值
+```js
+function* myGenerator() {
+  console.log(yield '1')  //test1
+  console.log(yield '2')  //test2
+  console.log(yield '3')  //test3
+}
+
+// 获取迭代器
+const gen = myGenerator();
+
+gen.next()
+gen.next('test1')
+gen.next('test2')
+gen.next('test3')
+```
+我们看到Generator的用法，应该️会感到很熟悉，`*/yield`和`async/await`看起来其实已经很相似了，它们都提供了暂停执行的功能，但二者又有三点不同：
+
+- `async/await`自带执行器，不需要手动调用next()就能自动执行下一步
+- `async`函数返回值是Promise对象，而Generator返回的是生成器对象
+- `await`能够返回Promise的resolve/reject的值
+
+**我们对async/await的实现，其实也就是对应以上三点封装Generator**
+
+### 模拟async/await
+这里async/await是关键字，不能重写，我们用函数来模拟：
+- 自带执行器，不需要手动调用next就能自动执行下一步
+- 返回值是Promise
+- Promise执行失败可以抛出错误，才能被外层的try-catch捕获到
+
+```js
+function run(gen) {
+  //把返回值包装成promise
+  return new Promise((resolve, reject) => {
+    var g = gen()
+
+    function _next(val) {
+      //错误处理
+      try {
+        var res = g.next(val)
+      } catch(err) {
+        return reject(err);
+      }
+      if(res.done) {
+        return resolve(res.value);
+      }
+      //res.value包装为promise，以兼容yield后面跟基本类型的情况
+      Promise.resolve(res.value).then(
+        val => {
+          _next(val);
+        },
+        err => {
+          //抛出错误
+          g.throw(err)
+        });
+    }
+    _next();
+  });
+}
+```
+测试一下，`*`相当于`async`， `yield`相当于`await`：
+```js
+function* myGenerator() {
+  try {
+    console.log(yield Promise.resolve(1))
+    console.log(yield 2)   //2
+    console.log(yield Promise.reject('error'))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const result = run(myGenerator)     //result是一个Promise
+//输出 1 2 error
+
+```
+
+...
+具体看这篇文章：[9k字 | Promise/async/Generator实现原理解析](https://juejin.cn/post/6844904096525189128#heading-13)
+
+
 # 参考
 - [【翻译】Promises/A+规范](https://www.ituring.com.cn/article/66566)
 - [这一次，彻底弄懂 Promise 原理](https://juejin.cn/post/6844904063570542599)
+- [9k字 | Promise/async/Generator实现原理解析](https://juejin.cn/post/6844904096525189128#heading-13)
