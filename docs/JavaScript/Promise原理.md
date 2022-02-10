@@ -1,5 +1,179 @@
 # Promise原理
 
+## Promise
+
+### Promise解决了什么问题
+- 回调地狱，代码难以维护， 常常第一个的函数的输出是第二个函数的输入这种现象
+- promise可以支持多个并发的请求，获取并发请求中的数据
+
+### reject细节
+- 情况一：由于2已经捕获了错误，所以4不会执行，并且3和5可以正常执行
+    ```js
+    new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(1)
+        }, 0)
+    }).then((value) => {
+        console.log('success', value) // 1
+    }, (error) => {
+        console.log('error', error)   // 2
+        return error
+    }).then(value => {
+        console.log('success', value) // 3
+        return value
+    }).catch(error => {
+        console.log('catch error', error) // 4
+    }).then(value => {
+        console.log('success', value) // 5
+         return value
+    })
+    ```
+- 情况二：reject会被catch捕获，最终只有4、5会执行
+    ```js
+    new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(1)
+        }, 0)
+    }).then((value) => {
+        console.log('success', value) // 1
+    }).then(value => {
+        console.log('success', value) // 3
+        return value
+    }).catch(error => {
+        console.log('catch error', error) // 4
+    }).then(value => {
+        console.log('success', value) // 5
+         return value
+    })
+    ```
+- 情况三：catch**不能**不会捕获到错误，，异常将会被视为 “Uncaught (in promise)” 被抛出到全局去。但使用await是可以捕获到的
+    ```js
+    try {
+        new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject(1)
+            }, 0)
+        }).then((value) => {
+            console.log('success', value)
+        })
+    } catch(error) {
+        console.log(error)
+    }
+
+    // 使用await可以捕获到
+    function test(id) {
+        return new MyPromise(((resolve, reject) => {
+            setTimeout(() => {
+                reject({ test: id })
+            }, 5000)
+        }))
+    }
+
+    async function main() {
+        try {
+            await test()
+        } catch(error) {
+            console.log('error', error)
+        }
+    }
+    main()
+    ```
+
+### Promise.resolve()
+- 说明
+    - 参数： 将被Promise对象解析的参数，也可以是一个Promise对象，或者是一个thenable（即带有"then" 方法）。
+    - 返回值： 返回一个带着给定值解析过的**Promise对象**，如果参数本身就是一个Promise对象，则直接返回这个Promise对象。
+- 使用
+
+    ```js
+    const promise1 = Promise.resolve(123);
+    promise1.then((value) => {
+    console.log(value);
+    // expected output: 123
+    });
+
+    // 输出：123
+    ```
+    **不要在解析为自身的thenable 上调用Promise.resolve。这将导致无限递归**
+    ```js
+    let thenable = {
+    then: (resolve, reject) => {
+        resolve(thenable)
+    }
+    }
+
+    Promise.resolve(thenable)  //这会造成一个死循环
+    ```
+
+### Promise.reject()
+- 返回一个带有拒绝原因的Promise对象。
+- 使用
+    ```js
+    function resolved(result) {
+        console.log('Resolved');
+    }
+
+    function rejected(result) {
+        console.error(result);
+    }
+
+    Promise.reject(new Error('fail')).then(resolved, rejected);
+    // 输出: Error: fail
+
+    ```
+## Promise.race & Promise.all
+- **Promise.race**
+    - 说明
+        - race 函数返回一个 Promise，一旦迭代器中的某个promise解决或拒绝，返回的 promise就会解决或拒绝。（只要有一个Promise有结果就会返回，其他Promise将被忽略）
+        - 如果传的迭代是空的，则返回的 promise 将永远等待。
+        - 如果迭代包含一个或多个`非Promise/Resolve Promise/Reject Promise`，则 Promise.race 将解析为迭代中找到的**第一个值**。(也就是说如果存在非Promise值如一个数字2，将会返回数字2，因为数字2不需要等待结果)
+    - 使用
+        ```js
+        const promise1 = new Promise((resolve, reject) => {
+        setTimeout(resolve, 500, 'one');
+        });
+
+        const promise2 = new Promise((resolve, reject) => {
+        setTimeout(resolve, 100, 'two');
+        });
+
+        Promise.race([promise1, promise2]).then((value) => {
+        console.log(value);
+        // Both resolve, but promise2 is faster
+        });
+        // expected output: "two"
+        ```
+- **Promise.all**
+    - 说明
+        - 参数： 接收一个promise的iterable类型（注：Array，Map，Set都属于ES6的iterable类型）
+        - 返回值：
+            - 完成状态
+                - 如果传入的可迭代对象为空，Promise.all 会**同步**地返回一个已完成（resolved）状态的promise。
+                - 如果**所有**传入的 promise 都变为完成状态，或者传入的可迭代对象内没有 promise，Promise.all 返回的 promise 异步地变为完成。
+                - 在任何情况下，Promise.all 返回的 promise 的完成状态的结果都是一个数组，它包含所有的传入迭代参数对象的值（也**包括非 promise 值**）。并且返回的数组顺序跟传入promise**顺序是一样的**
+            - 失败
+                - 如果传入的 promise 中有一个失败（rejected），Promise.all 异步地将失败的那个结果给失败状态的回调函数，而不管其它 promise 是否完成。
+        - 总结：
+            - **所有Promise都成功或者有一个失败才会返回**
+            - promise.all中的任务是**并行执行**的，但结果是**按顺序返回**的
+            - Promise.all 当且仅当传入的可迭代对象为空时为同步，其他情况为异步
+            - 如果参数中包含非 promise 值，这些值将被忽略，但仍然会被放在返回数组中（如果 promise 完成的话）
+    - 使用：
+        ```js
+        const promise1 = Promise.resolve(3);
+        const promise2 = 42;
+        const promise3 = new Promise((resolve, reject) => {
+        setTimeout(resolve, 100, 'foo');
+        });
+
+        Promise.all([promise1, promise2, promise3]).then((values) => {
+        console.log(values);
+        });
+        // expected output: Array [3, 42, "foo"]
+        ```
+
+-  **Promise.allSettled**
+    - 该Promise.allSettled()方法返回一个在所有给定的promise都已经fulfilled或rejected后的promise，并带有一个对象数组，每个对象表示对应的promise结果。
 
 ## 手写Promise
 - Promise遵循[【翻译】Promises/A+规范](https://www.ituring.com.cn/article/66566)
