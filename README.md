@@ -1,5 +1,5 @@
 # frontend-notes
-前端知识点总结
+该项目主要用于前端知识点总结，其他一些有意义的分享或调研会发布到[我的掘金](https://juejin.cn/user/720898433231335/posts)上。
 
 ## HTML
 * [图像优化](./docs/HTML/图像优化.md#图像优化)
