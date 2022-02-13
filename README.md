@@ -19,9 +19,10 @@
 * [Promise原理](./docs/JavaScript/Promise原理.md)
 
 ## 浏览器
-* [V8引擎的垃圾回收](./docs/JavaScript/V8引擎的垃圾回收.md)
-* [事件循环机制](./docs/JavaScript/事件循环机制.md)
-* [浮点数精度](./docs/JavaScript/浮点数精度.md)
+* [V8引擎的垃圾回收](./docs/Browser/V8引擎的垃圾回收.md)
+* [事件循环机制](./docs/Browser/事件循环机制.md)
+* [浮点数精度](./docs/Browser/浮点数精度.md)
+* [Hash路由和History路由](./docs/Browser/Hash路由和History路由.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
