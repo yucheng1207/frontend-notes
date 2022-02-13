@@ -24,6 +24,7 @@
 * [浮点数精度](./docs/Browser/浮点数精度.md)
 * [Hash路由和History路由](./docs/Browser/Hash路由和History路由.md)
 * [DOM树构建](./docs/Browser/DOM树构建.md)
+* [缓存策略](./docs/Browser/缓存策略.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
