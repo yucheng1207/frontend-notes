@@ -16,6 +16,7 @@
 * [继承](./docs/JavaScript/继承.md)
 * [函数柯里化和偏函数](./docs/JavaScript/函数柯里化和偏函数.md)
 * [Promise原理](./docs/JavaScript/Promise原理.md)
+* [设计模式](./docs/JavaScript/设计模式.md)
 
 ## 浏览器
 * [V8引擎的垃圾回收](./docs/Browser/V8引擎的垃圾回收.md)

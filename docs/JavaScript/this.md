@@ -105,10 +105,54 @@ ECMAScript 的类型分为语言类型和规范类型。
         ```
 
 ## 从调用场景分析
-- 作为对象调用时，指向该对象 obj.b(); // 指向obj
-- 作为函数调用, var b = obj.b; b(); // 指向全局window
-- 作为构造函数调用 var b = new Fun(); // this指向当前实例对象
-- 作为call与apply调用 obj.b.apply(object, []); // this指向当前的object
+- 作为对象的方法调用时，this 指向该对象
+    ```js
+    var obj = {
+        a: 1,
+        getA: function(){
+            alert ( this === obj );    // 输出：true
+            alert ( this.a );    // 输出: 1
+        }
+    };
+    obj.getA(); // 指向obj
+    ```
+- 作为普通函数调用时, this 总是指向全局对象。在浏览器的JavaScript 里，这个全局对象是window 对象。
+    ```js
+    var getA = obj.getA;
+    getA(); // 指向全局window
+    ```
+- 作为构造函数调用，当用new 运算符调用函数时，该函数总
+会返回一个对象，通常情况下，构造器里的this 就指向返回的这个对象
+    ```js
+    var MyClass = function(){
+        this.name = 'sven';
+    };
+
+    var obj = new MyClass();
+    alert ( obj.name );     // 输出：sven
+    ```
+    但用new 调用构造器时，还要注意一个问题，如果构造器显式地返回了一个object 类型的对象，那么此次运算结果最终会返回这个对象，而不是我们之前期待的this：
+    ```js
+    var MyClass = function() {
+        this.name = 'sven';
+        return {    // 显式地返回一个对象
+            name: 'anne'
+        }
+    };
+    var obj = new MyClass();
+    alert ( obj.name );     // 输出：sven
+    ```
+    如果构造器不显式地返回任何数据，或者是返回一个非对象类型的数据，就不会造成上述问题：
+    ```js
+    var MyClass = function(){
+        this.name = 'sven'
+        return 'anne';    // 返回string 类型
+    };
+    ```
+- 作为call与apply调用时，this指向第一个参数
+    ```js
+    obj.b.apply(object, []); // this指向当前的object
+    ```
 
 [JavaScript 的 this 原理 - 阮一峰](https://www.ruanyifeng.com/blog/2018/06/javascript-this.html)有内存数据结构和调用环境的讲解，比较简单易懂
 
