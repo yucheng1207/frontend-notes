@@ -25,6 +25,7 @@
 * [DOM树构建](./docs/Browser/DOM树构建.md)
 * [缓存策略](./docs/Browser/缓存策略.md)
 * [浏览器从输入网址到页面展现的整个过程](./docs/Browser/浏览器从输入网址到页面展现的整个过程.md)
+* [重排&重绘](./docs/Browser/重排&重绘.md)
 
 ## NodeJS
 * [CommonJS和ES6模块的区别](./docs/NodeJS/CommonJS和ES6模块的区别.md)
