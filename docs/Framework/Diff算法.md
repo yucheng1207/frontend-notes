@@ -1,6 +1,6 @@
 # Diff算法
 
-## React diff
+## React diff - 递增法
 
 - ### tree diff
     - react对树的算法进行了分层比较，只会对比同一层级的节点（即只会对比同一个父节点下的所有子节点）。当发现节点不存在，则该节点和其子节点都会被删除。这样只需要遍历一次dom树，就完成了整个dom树的对比
@@ -85,7 +85,7 @@
         - 先用四个指针指向两个列表的头尾，对比指针对应的节点，一共有四种情况，对比顺序如下：
             - prevList 的头节点跟 newList 的 头节点作对比（a↔d）
             - prevList 的尾节点跟 newList 的 尾节点作对比（d↔c）
-            - prevList 的头节点跟 newList 的 头节点作对比（a↔c）
+            - prevList 的头节点跟 newList 的 尾节点作对比（a↔c）
             - prevList 的尾节点跟 newList 的 头节点作对比（d↔d）
             ```
             DOM        A   B   C   D
